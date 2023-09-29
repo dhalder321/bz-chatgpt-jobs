@@ -1,0 +1,35 @@
+{
+  "name": "chatgpt-jobs",
+  "version": "1.0.0",
+  "description": "Create a continuous process to add new topics and sub topics",
+  "main": "index.js",
+  "scripts": {
+    "test": "gptjob"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhalder321/bz-chatgpt-jobs.git"
+  },
+  "author": "Debjit Halder",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dhalder321/bz-chatgpt-jobs/issues"
+  },
+  "homepage": "https://github.com/dhalder321/bz-chatgpt-jobs#readme",
+  "dependencies": {
+    "anchorme": "^3.0.5",
+    "docx-pdf": "^0.0.1",
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
+    "libreoffice-convert": "^1.4.1",
+    "officegen": "^0.6.5",
+    "openai": "^4.10.0",
+    "pdfkit": "^0.13.0",
+    "readline-sync": "^1.4.10",
+    "string": "^3.3.3",
+    "stringz": "^2.1.0",
+    "underscore.string": "^3.3.6",
+    "voca": "^1.4.1",
+    "word-count": "^0.2.2"
+  }
+}
