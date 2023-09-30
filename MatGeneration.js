@@ -3,17 +3,12 @@ const { SaveMaterial } = require("./FileAccess");
 const gpt = require("./ChatGPT");
 const str = require("./Strings");
 const { prompts } = require("./GPTPrompts");
-const { topics, topicData } = require("./SharedVariables");
+const { topics, topicData, languages, mat_prompts } = require("./SharedVariables");
 const wordCount = require("word-count");
 
 let MatGeneration = async (allSubTopics) => {
 
     var user_input, mat_list_prompt, mat_sample_generation_prompt;
-
-    var mat_prompts = ["material_quiz_generation",
-        "material_question_paper_generation",
-        "material_summary_generation",
-        "material_interview_question_generation"];
 
     console.log("Material generation started...");
 
@@ -85,7 +80,7 @@ let MatGeneration = async (allSubTopics) => {
 
 async function GenerateMaterial(subTopic2, subTopic3, mat, mat_type, complexity, mat_list_prompt, generation_prompt){
 
-    var mat_sampleFileDocxName = mat + "_" + mat_type + "_sample.docx";
+    var mat_sampleFileDocxName = mat + "_" + mat_type + "_enus_sample.docx";
     var mat_sample_generation_prompt = "";
     var user_input = "";
 
@@ -95,12 +90,13 @@ async function GenerateMaterial(subTopic2, subTopic3, mat, mat_type, complexity,
         subTopic3: subTopic3,
         material_name: mat,
         mat_type: mat_type,
+        mat_locale: "en-us",
         mat_sampleFileDocxName: mat_sampleFileDocxName,
-        mat_sampleFilePDFName: mat  + "_" + mat_type + "_sample.pdf",
+        mat_sampleFilePDFName: mat  + "_" + mat_type + "_enus_sample.pdf",
         mat_sampleDocxCreated: false,
         mat_samplePDFCreated: false,
-        mat_originalFileDocxName: mat  + "_" + mat_type + "_orgn.docx",
-        mat_originalFilePDFName: mat  + "_" + mat_type + "_orgn.pdf",
+        mat_originalFileDocxName: mat  + "_" + mat_type + "_enus_sample.docx",
+        mat_originalFilePDFName: mat  + "_" + mat_type + "_enus_sample.pdf",
         mat_originalDocxCreated: false,
         mat_originalPDFCreated: false,
         mat_FileLocalPath: "",
@@ -109,10 +105,12 @@ async function GenerateMaterial(subTopic2, subTopic3, mat, mat_type, complexity,
         mat_sampleFileWordCount: -1, //wordCount(output_text),
         mat_list_prompt: mat_list_prompt,
         mat_sample_generation_prompt: "",
-        datetimeOfSampleGeneration: new Date().toUTCString(),
+        purpose: "",
+        datetimeOfMatGeneration: new Date().toUTCString(),
+        datetimeOfMatUpdation: new Date().toUTCString(),
     };
 
-    console.log("\n\n****Generating contect for ::" + subTopic2 + "=>" + subTopic3 + "=>" + mat + " - Mat type(" + mat_type + ")**********");
+    console.log("\n\n****Generating content for ::" + subTopic2 + "=>" + subTopic3 + "=>" + mat + " \n- Mat type(" + mat_type + ")**********");
 
     var prompt = generation_prompt.replaceAll("<topic>", mat).replaceAll("<main_topic>", topics[0]);
     if (readlineSync.question("\nContinue " + mat_type + " generation for material " + mat + "? (Y/N) ::").toUpperCase() === "N") {
@@ -140,10 +138,11 @@ async function GenerateMaterial(subTopic2, subTopic3, mat, mat_type, complexity,
         topicData.push(matDetails);
         return;
     }
+    
     //save the material file - sample file
-    const outputFileData = { outputFilePath: "" };
+    let outputFileData = { outputFilePath: "", wordCount: -1};
     await SaveMaterial(topics[0], subTopic2, subTopic3, mat,
-        mat_sampleFileDocxName, "sample", outputFileData, output_text);
+        mat_sampleFileDocxName, "sample", "en-us", outputFileData, output_text);
     console.log("Material for topic " + mat + " saved successfully.");
 
     //set the global topic data
@@ -156,6 +155,28 @@ async function GenerateMaterial(subTopic2, subTopic3, mat, mat_type, complexity,
     }
     topicData.push();
 
+    //save materials in other languages 
+    for(lan of languages)
+    {
+        if(lan.locale == 'en-us' || mat_type !== "summary") continue;
+
+         //save the material file - sample file
+        let outputFileData = { outputFilePath: "", wordCount: -1 };
+        await SaveMaterial(topics[0], subTopic2, subTopic3, mat,
+            mat_sampleFileDocxName, "sample", lan.locale, outputFileData, output_text);
+        console.log("Material for topic " + mat + " in locale " + lan.locale + " saved successfully.");
+
+        //set the global topic data
+        matDetails = {
+            ...matDetails,
+            locale: lan.locale,
+            mat_sample_generation_prompt: mat_sample_generation_prompt,
+            mat_sampleDocxCreated: true,
+            mat_sampleFileWordCount: outputFileData.wordCount,
+            mat_FileLocalPath: outputFileData.outputFilePath,
+        }
+        topicData.push();
+    }
 
 }
 

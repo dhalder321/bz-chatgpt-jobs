@@ -3,6 +3,9 @@ const libre = require("libreoffice-convert");
 const path = require("path");
 const fs = require('fs');
 const { center } = require('underscore.string');
+const {TranslateLanguage} = require("./Translate");
+const { languages } = require('./SharedVariables');
+const wordCount = require('word-count');
 libre.convertAsync = require('util').promisify(libre.convert);
 
 
@@ -28,31 +31,42 @@ async function ConvertDocToPdf(filePath) {
 
 }
 
-let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileType, outputFileData, content) => {
+let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileType, locale, outputFileData, content) => {
 
     const filePath = 'C:\\Fundu\\Generated materials\\'; 
 
     try{
+        //USA english is default
+        var language = languages.find(l => l.locale===locale).lan;
+        var tranTopic = locale !== "en-us"? await TranslateLanguage(topic, language): topic;
+        var tranSubTopic2 = locale !== "en-us"? await TranslateLanguage(subTopic2, language): subTopic2; 
+        var tranSubTopic3 = locale !== "en-us"? await TranslateLanguage(subTopic3, language): subTopic3;
+        var tranMatName = locale !== "en-us"?await TranslateLanguage(matName, language): matName;
+        var tranFileName = locale !== "en-us"?await TranslateLanguage(fileName, language): fileName;
+        var tranFileType = locale !== "en-us"?await TranslateLanguage(fileType, language): fileType;
+        content = locale !== "en-us"? await TranslateLanguage(content, language): content;
+
         //check for the local file existance
-        var folderPath = filePath + topic + "\\" +  subTopic2 + "\\" + subTopic3 + "\\en-us\\";
+        var folderPath = filePath + topic + "\\" +  subTopic2 + "\\" + subTopic3 + "\\" + locale + "\\";
 
         if(!fs.existsSync(folderPath)){
             fs.mkdirSync(folderPath, {recursive: true});
         }
         outputFileData.outputFilePath = folderPath;
+        outputFileData.wordCount = wordCount(content);
 
         //create the docx document
         let docx = officegen('docx');
 
-        docx.setDocTitle(fileName);
-        docx.setDocSubject(matName);
-        docx.setDocKeywords(subTopic3);
-        docx.setDescription( "A material on " + subTopic2 +". Detailing is on " + subTopic3 + ", specifically on " + matName);
+        docx.setDocTitle(tranFileName);
+        docx.setDocSubject(tranMatName);
+        docx.setDocKeywords(tranSubTopic3);
+        docx.setDescription( );
         // docx.setDocCategory('...')
         // docx.setDocStatus('...')
 
         let firstPObj = docx.createP({ align : 'center'});
-        firstPObj.addText('\n'.repeat(12) + matName, {
+        firstPObj.addText('\n'.repeat(12) + tranMatName, {
             bold: true,
             font_face: 'Times New Roman',
             font_size: 40,
@@ -77,7 +91,9 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileTy
         if(fileType === "sample")
         {
             pObj = docx.createP({align: 'center'});
-            pObj.addText("!!SAMPLE DOCUMENT. MATERIAL HIDDEN!!", {
+            pObj.addText(locale !== 'en-us'? await TranslateLanguage("!!SAMPLE DOCUMENT. MATERIAL HIDDEN!!", language): 
+                                "!!SAMPLE DOCUMENT. MATERIAL HIDDEN!!"                         
+            , {
                 bold: true,
                 font_face: 'Times New Roman',
                 font_size: 15,
@@ -93,7 +109,9 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileTy
         });
 
         var footer = docx.getFooter ().createP ({align : 'center'});
-        footer.addText ( "© 2023 Blue Zebra Development Corporation. All rights reserved.", { 
+        footer.addText (locale !== 'en-us'? await TranslateLanguage("© 2023 Blue Zebra Development Corporation. All rights reserved.", language):
+                                "© 2023 Blue Zebra Development Corporation. All rights reserved."
+        , { 
             bold: true,
             font_face: 'Arial',
             font_size: 12

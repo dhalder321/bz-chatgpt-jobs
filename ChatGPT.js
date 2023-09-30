@@ -16,7 +16,7 @@ function SetContext(context)
 
 } 
 
-async function GetGPTResponse(input, maxTokenCount = 100){
+async function GetGPTResponse(input, maxTokenCount = 250){
 
     var loop = true;
     var loopCount = 0;
@@ -56,6 +56,8 @@ async function GetGPTResponse(input, maxTokenCount = 100){
             {
                 loop = true;
                 loopCount++;
+                console.log("In GPT module:error occuring.")
+
             }
         }
     }

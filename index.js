@@ -1,9 +1,16 @@
-const docxConverter = require('docx-pdf');
-const {ConvertDocToPdf} = require("./FileAccess");
+const readlineSync = require("readline-sync");
+const { TopicCuration } =  require("./TopicCuration");
+const {MatGeneration} = require("./MatGeneration");
+const {topics} = require("./SharedVariables");
 
-// docxConverter('./a.docx','./output.pdf', (err, result) => {
-//   if (err) console.log(err);
-//   else console.log(result); // writes to file for us
-// });
+let main = async () => {
 
-ConvertDocToPdf('C:\\Fundu\\ChatGPT Jobs\\x.docx');
+topics[0] = readlineSync.question("\nProvide the name of the main topic:: ");
+
+const arr = await TopicCuration();
+
+await MatGeneration(arr);
+
+}
+
+main();
