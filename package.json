@@ -18,6 +18,7 @@
   "homepage": "https://github.com/dhalder321/bz-chatgpt-jobs#readme",
   "dependencies": {
     "anchorme": "^3.0.5",
+    "aws-sdk": "^2.1467.0",
     "docx-pdf": "^0.0.1",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",

@@ -19,6 +19,7 @@ let MatGeneration = async (allSubTopics) => {
 
     for (let subTopic2 of allSubTopics) {
         for (let subTopic3 of subTopic2.topics_level_3) {
+            
             console.log("Mat Gen - Topic in process:: " + subTopic2.topic_level_2 + " => " + subTopic3);
             if (readlineSync.question("\nMat Gen - You Want to continue with the sub topic? (Y/N)").toUpperCase() === "N") {
                 //skip mat gen
