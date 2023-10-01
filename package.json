@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/dhalder321/bz-chatgpt-jobs#readme",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.421.0",
+    "@aws-sdk/client-s3": "^3.421.0",
+    "@aws-sdk/lib-dynamodb": "^3.421.0",
     "anchorme": "^3.0.5",
     "aws-sdk": "^2.1467.0",
     "docx-pdf": "^0.0.1",

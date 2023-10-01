@@ -16,65 +16,86 @@ let TopicCuration = async () => {
     var subTopics = [];
 
 do {
-        //get the ask
-        var user_input = readlineSync.question("Enter your input: ");
-        try {
-            //get GPT response
-            var output_text = await gpt.GetGPTResponse(user_input);
 
-            //parse the topics
-            subTopics = str.GetMatches(output_text, "topic_list_pattern");
-            console.log(subTopics);
+        //receive any topic, sub-topic2, sub-topic3 and material name
+        if(readlineSync.question("\n\nDo you like to enter all the topic details (Y/N)::").toUpperCase() === "Y")
+        {
+            var subTopic2 = "";
+            var subTopic3 = [];
+            subTopic2 = readlineSync.question("\n\nEnter the sub topic 2::");
+            do{
+                subTopic3.push(readlineSync.question("\n\nEnter the sub topic 3::"));
 
-            //get the level 3 sub topics
-            if(readlineSync.question("\nYou Want to go for next level of Topics? (Y/N)").toUpperCase() === "N")
-            {
-                allSubTopics = subTopics;
-            }
-            else{ //go for next level of topics
-                var tempSubtopics3 = [];
-                for(let subTopic2 of subTopics)
+            }while(readlineSync.question("\n\nDo you like to enter other sub topic 3 (Y/N)::").toUpperCase() === "Y");
+            
+            allSubTopics.push({
+                topic_level_2: subTopic2,
+                topics_level_3: subTopic3
+            });
+        }
+        else
+        {
+
+            //get the ask
+            var user_input = readlineSync.question("Enter your input: ");
+            try {
+                //get GPT response
+                var output_text = await gpt.GetGPTResponse(user_input);
+
+                //parse the topics
+                subTopics = str.GetMatches(output_text, "topic_list_pattern");
+                console.log(subTopics);
+
+                //get the level 3 sub topics
+                if(readlineSync.question("\nYou Want to go for next level of Topics? (Y/N)").toUpperCase() === "N")
                 {
-                    tempSubtopics3 = [];
-                    console.log("Topic in process: " + subTopic2 + "\n");
-                    if(readlineSync.question("\nYou Want to continue with the sub topic? (Y/N)").toUpperCase() === "N")
+                    allSubTopics = subTopics;
+                }
+                else{ //go for next level of topics
+                    var tempSubtopics3 = [];
+                    for(let subTopic2 of subTopics)
                     {
-                        //skip the sub topic 2
-                        continue;
-                    }
-                    user_input = readlineSync.question("Enter your input: ");
-                    //get GPT response
-                    output_text = await gpt.GetGPTResponse(user_input);
-                    tempSubtopics3 = str.GetMatches(output_text, "topic_list_pattern");
-                    console.log(tempSubtopics3);
-                    if(tempSubtopics3 && tempSubtopics3.length > 0 &&
-                        readlineSync.question("\nYou Want to add the sub topics? (Y/N)").toUpperCase() === "Y")
-                    {
-                        allSubTopics.push({
-                            topic_level_2: subTopic2,
-                            topics_level_3: tempSubtopics3
-                        });
+                        tempSubtopics3 = [];
+                        console.log("Topic in process: " + subTopic2 + "\n");
+                        if(readlineSync.question("\nYou Want to continue with the sub topic? (Y/N)").toUpperCase() === "N")
+                        {
+                            //skip the sub topic 2
+                            continue;
+                        }
+                        user_input = readlineSync.question("Enter your input: ");
+                        //get GPT response
+                        output_text = await gpt.GetGPTResponse(user_input);
+                        tempSubtopics3 = str.GetMatches(output_text, "topic_list_pattern");
+                        console.log(tempSubtopics3);
+                        if(tempSubtopics3 && tempSubtopics3.length > 0 &&
+                            readlineSync.question("\nYou Want to add the sub topics? (Y/N)").toUpperCase() === "Y")
+                        {
+                            allSubTopics.push({
+                                topic_level_2: subTopic2,
+                                topics_level_3: tempSubtopics3
+                            });
 
-                        // //add material
-                        // allSubTopics.find(t => t.topic_level_2 === subTopic2).forEach(element =>  {
-                        //     MatGeneration(subTopic2, element);
-                        // }); 
-                    }
-                    else
-                    {
-                        //skip the subtopic
+                            // //add material
+                            // allSubTopics.find(t => t.topic_level_2 === subTopic2).forEach(element =>  {
+                            //     MatGeneration(subTopic2, element);
+                            // }); 
+                        }
+                        else
+                        {
+                            //skip the subtopic
+                        }
                     }
                 }
+            } 
+            catch (err) {
+                if (err.response) {
+                    console.log(err.response.status);
+                    console.log(err.response.data);
+                } else {
+                    console.log(err.message);
+                }
             }
-        } 
-        catch (err) {
-            if (err.response) {
-                console.log(err.response.status);
-                console.log(err.response.data);
-            } else {
-                console.log(err.message);
-            }
-        }
+        }//end of else
     } 
     while (readlineSync.question("\nYou Want more Topics? (Y/N)").toUpperCase() === "Y");
     console.log(allSubTopics);

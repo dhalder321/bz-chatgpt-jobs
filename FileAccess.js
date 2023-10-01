@@ -6,6 +6,7 @@ const { center } = require('underscore.string');
 const {TranslateLanguage} = require("./Translate");
 const { languages } = require('./SharedVariables');
 const wordCount = require('word-count');
+const str = require("./Strings");
 libre.convertAsync = require('util').promisify(libre.convert);
 
 
@@ -31,7 +32,8 @@ async function ConvertDocToPdf(filePath) {
 
 }
 
-let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileType, locale, outputFileData, content) => {
+let SaveMaterial = async (topic, subTopic2, subTopic3, matName, matType, fileName, 
+                                    fileType, locale, outputFileData, content) => {
 
     const filePath = 'C:\\Fundu\\Generated materials\\'; 
 
@@ -42,6 +44,7 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileTy
         var tranSubTopic2 = locale !== "en-us"? await TranslateLanguage(subTopic2, language): subTopic2; 
         var tranSubTopic3 = locale !== "en-us"? await TranslateLanguage(subTopic3, language): subTopic3;
         var tranMatName = locale !== "en-us"?await TranslateLanguage(matName, language): matName;
+        var tranMatType = locale !== "en-us"?await TranslateLanguage(matType, language): matType;
         var tranFileName = locale !== "en-us"?await TranslateLanguage(fileName, language): fileName;
         var tranFileType = locale !== "en-us"?await TranslateLanguage(fileType, language): fileType;
         content = locale !== "en-us"? await TranslateLanguage(content, language): content;
@@ -53,7 +56,7 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileTy
             fs.mkdirSync(folderPath, {recursive: true});
         }
         outputFileData.outputFilePath = folderPath;
-        outputFileData.wordCount = wordCount(content);
+        outputFileData.wordCount = wordCount(content); //this is sample doc word count
 
         //create the docx document
         let docx = officegen('docx');
@@ -71,6 +74,13 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileTy
             font_face: 'Times New Roman',
             font_size: 40,
         })
+
+        firstPObj.addText('\n'.repeat(3) + tranMatType, {
+            bold: true,
+            font_face: 'Times New Roman',
+            font_size: 26,
+        })
+
         docx.putPageBreak();
 
         let pObj = docx.createP();
@@ -131,7 +141,7 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, fileName, fileTy
         });
        
 
-        docx.generate(out);
+        await docx.generate(out);
 
     }
     catch (e)

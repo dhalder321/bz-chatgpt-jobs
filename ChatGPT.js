@@ -40,7 +40,7 @@ async function GetGPTResponse(input, maxTokenCount = 250){
             const GPTOutput = await openai.chat.completions.create({
                 model: "gpt-3.5-turbo",
                 messages: messageList,
-                max_tokens: maxTokenCount
+                max_tokens: 100
             });
         
             output_text = GPTOutput.choices[0].message.content;
