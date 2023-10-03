@@ -25,11 +25,23 @@ const prompts = [
 
     { prompt_name: "material_summary_generation", 
         mat_type: "summary",
-        prompt: "generate a 200 word summary on the <topic> so that a graduate student of <main_topic> can quickly recollect gist on the topic."},
+        prompt: "generate a summary on main 15 to 20 topics on <topic> in <main_topic> with specific detailing on the most important parts of each topic e.g. definitions, details of related theories, mathematical formulas and examples. Do not provide any high-level general discussions or just high-level topic names. this summary should help an accounting graduate student to quickly recapitulate the gist of the topic."},
 
     { prompt_name: "material_interview_question_generation", 
         mat_type: "interview questions",
         prompt: "generate a list of 5 interview questions on <topic> that can help graduate students of <main_topic> prepare for post graduation job interview. Provide one line gap after each question."},
+    
+    { prompt_name: "material_project_assignment_generation", 
+        mat_type: "project assignment ideas",
+        prompt: "generate a list of 5 project assignment ideas on <topic> that can help graduate students of <main_topic> prepare for post graduation job interview. Provide one line gap after each question."},
+        
+    { prompt_name: "material_presentation_slides", 
+        mat_type: "presentation slides",
+        prompt: "generate a list of 10 page presentation slides on <topic> that can help professors of <main_topic> prepare for class presentation. Provide one line gap after each question."},
+    
+    { prompt_name: "material_mathematical_details", 
+        mat_type: "mathematical formulas",
+        prompt: "generate a list of all the mathematical formulas on <topic> that can help graduate students of <main_topic> prepare for graduate examination. Please provide 5 examples to use these formulas."},
 ]
 
 module.exports= {prompts}

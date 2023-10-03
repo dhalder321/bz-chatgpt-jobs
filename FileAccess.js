@@ -32,6 +32,16 @@ async function ConvertDocToPdf(filePath) {
 
 }
 
+async function StoreData(data, path) {
+    try {
+      
+      await fs.writeFileSync(path, JSON.stringify(data));
+
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
 let SaveMaterial = async (topic, subTopic2, subTopic3, matName, matType, fileName, 
                                     fileType, locale, outputFileData, content) => {
 
@@ -130,7 +140,9 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, matType, fileNam
         let out = fs.createWriteStream(folderPath + fileName);
 
         out.on('error', function(err) {
-        console.log(err)
+            console.log(err);
+            out.end();
+            out.close();
         })
 
         // Async call to generate the output file
@@ -138,6 +150,8 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, matType, fileNam
             //convert to PDF
             //console.log("Bytes written:: " + written )
             //ConvertDocToPdf(folderPath + fileName);
+            out.end();
+            out.close();
         });
        
 
@@ -151,4 +165,4 @@ let SaveMaterial = async (topic, subTopic2, subTopic3, matName, matType, fileNam
 }
 
 
-module.exports = {SaveMaterial, ConvertDocToPdf}
+module.exports = {SaveMaterial, ConvertDocToPdf, StoreData}

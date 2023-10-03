@@ -26,21 +26,21 @@ async function UpdateMaterials(materials)
   const response = await client.send(cmd);
   //console.log(JSON.stringify(response));
   var startIndex = 1;
-  startIndex = response && response.Items && response.ScannedCount > 0 &&
+  startIndex = Number(response && response.Items && response.ScannedCount > 0 &&
                       response.Items.sort((m1, m2) => {
-                                        if (m1.topic_Id.N < m2.topic_Id.N) 
+                                        if (Number(m1.topic_Id.N) < Number(m2.topic_Id.N)) 
                                         {
                                             return 1;
                                         }
-                                        else if (m1.topic_Id.N > m2.topic_Id.N)
+                                        else if (Number(m1.topic_Id.N) > Number(m2.topic_Id.N))
                                         {
                                             return -1;
                                         }
                                         else {
                                             return 0;
                                         }
-                                  })[0]["topic_Id"].N; 
-  //console.log("startIndex::" + JSON.stringify( startIndex));
+                                  })[0].topic_Id.N);
+  console.log("startIndex::" + JSON.stringify( startIndex));
 
   //add topic_id index before DB insertion
    const mats = materials.map( x => {

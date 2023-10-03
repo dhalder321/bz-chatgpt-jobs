@@ -7,15 +7,6 @@ const fs = require('fs');
 
 async function UploadFileToS3(topic, subtopic2, subtopic3, mat, language, filePath, fileName){ 
 
-    if(!fs.existsSync(filePath))
-    {
-      console.log("Local file to upload to S3 not found.");
-      return;
-    }
-
-    const fileData =  fs.readFileSync(path.join( filePath, fileName));
-
-
     var bucketName = 'fundu-document-repository';
     var s3prefixedFileName = "fundu/Materials/"
     //var s3prefixedFileName = "";
@@ -25,6 +16,16 @@ async function UploadFileToS3(topic, subtopic2, subtopic3, mat, language, filePa
     s3prefixedFileName += subtopic3? subtopic3 + "/" : "";  
     s3prefixedFileName += language? language + "/" : "";
     //s3prefixedFileName += fileName;  
+
+    return s3prefixedFileName;
+    
+    // if(!fs.existsSync(filePath))
+    // {
+    //   console.log("Local file to upload to S3 not found.");
+    //   return s3prefixedFileName;
+    // }
+
+    //const fileData =  fs.readFileSync(path.join( filePath, fileName));
 
     const client = new S3Client({
       region: 'us-east-2',
@@ -43,7 +44,7 @@ async function UploadFileToS3(topic, subtopic2, subtopic3, mat, language, filePa
       Body: fileData,
     });
 
-    const response = await client.send(command);
+    //const response = await client.send(command);
     //console.log(response);
     return s3prefixedFileName;
 }

@@ -16,7 +16,7 @@ function SetContext(context)
 
 } 
 
-async function GetGPTResponse(input, maxTokenCount = 250){
+async function GetGPTResponse(input, maxTokenCount = 150){
 
     var loop = true;
     var loopCount = 0;
@@ -40,7 +40,7 @@ async function GetGPTResponse(input, maxTokenCount = 250){
             const GPTOutput = await openai.chat.completions.create({
                 model: "gpt-3.5-turbo",
                 messages: messageList,
-                max_tokens: 100
+                max_tokens: maxTokenCount
             });
         
             output_text = GPTOutput.choices[0].message.content;
